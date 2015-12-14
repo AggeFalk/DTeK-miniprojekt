@@ -1,3 +1,0 @@
-void OledHostinit();
-
-void OledDspInit();
