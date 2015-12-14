@@ -160,6 +160,25 @@ void display_image(int x, const uint8_t *data) {
 	}
 }
 
+void display_background(const uint8_t *background) {
+	int i, j, k;
+	int c;
+	for(i = 0; i < 4; i++) {
+		DISPLAY_CHANGE_TO_COMMAND_MODE;
+		spi_send_recv(0x22);
+		spi_send_recv(i);
+		
+		spi_send_recv(0x0);
+		spi_send_recv(0x10);
+		
+		DISPLAY_CHANGE_TO_DATA_MODE;
+		
+		for(j = 0; j < 128; j++) {			
+			spi_send_recv(~background[i*128 + j]);
+		}
+	}
+}
+
 void display_update(void) {
 	int i, j, k;
 	int c;
@@ -179,7 +198,7 @@ void display_update(void) {
 				continue;
 			
 			for(k = 0; k < 8; k++)
-				spi_send_recv(font[c*8 + k]);
+				spi_send_recv(~font[c*8 + k]);
 		}
 	}
 }
@@ -322,3 +341,43 @@ char * itoaconv( int num )
    * we must add 1 in order to return a pointer to the first occupied position. */
   return( &itoa_buffer[ i + 1 ] );
 }
+
+
+
+
+void timer_init(){
+	volatile int * pe =(volatile int *) 0xbf886100;
+  	*pe = *pe & 0xff00;
+  
+  	TRISDSET = 0x0ff0;
+	TRISFSET = 0x0ff0;
+
+  	IEC(0) = IEC(0) | 0x00000100;  //enable interrupts on timer 2
+  	IPC(2) = IPC(2) | 0x0000001f;  //set sub and main priority to highest
+  	enable_interrupt();
+
+ 	 //PR2 = 0x3d09;
+ 	 PR2 = 0x7a12;             // timer count this many times before setting flag
+  	 T2CONSET = 0x8070;	     // enable timer and set prescaling
+
+  return;
+}
+
+/*Interrupt service routine, makes block go down and checks for collision*/
+void godown(){
+	Block currentBlock;
+	currentBlock->parameter -= 1;
+	listindex = listindex % 20;
+	if(colliding(currentBlock->pixels, template)){
+		currentBlock->parameter += 1;
+		currentBlock = list[listindex];			
+	}
+	display_image(currentBlock->parameter, currentBlock->pixels);
+  return;
+}
+
+
+
+
+
+
