@@ -179,6 +179,36 @@ void display_background(const uint8_t *background) {
 	}
 }
 
+void display_frommatrix(int[8][32] matrix){
+	int i,j;
+	for(i=0;i<8;i+=2){
+		DISPLAY_CHANGE_TO_COMMAND_MODE;
+		spi_send_recv(0x22);
+		spi_send_recv(i/2);
+		spi_send_recv(0x0);
+		spi_send_recv(0x10);
+		DISPLAY_CHANGE_TO_DATA_MODE;
+
+		for(j=0;j<32;j++){
+			if(matrix[i][j] & matrix[i+1][j]){
+				spi_send_recv(255);				
+			}
+			else if(matrix[i][j] & !matrix[i+1][j]){
+				spi_send_recv(15);				
+			}
+			else if(!matrix[i][j] & matrix[i+1][j]){
+				spi_send_recv(240);
+			else{/*Both are zero*/
+				spi_send_recv(0);
+			}				
+
+		}
+
+	}
+
+}
+
+
 void display_update(void) {
 	int i, j, k;
 	int c;
