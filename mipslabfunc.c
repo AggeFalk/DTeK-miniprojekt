@@ -178,7 +178,107 @@ void display_background(const uint8_t *background) {
 		}
 	}
 }
+void display_frommatrix(volatile int matrix[8][32]){
+	int i,j,c;
+	for(i=0;i<8;i+=2){
+		DISPLAY_CHANGE_TO_COMMAND_MODE;
+		spi_send_recv(0x22);
+		spi_send_recv(i/2);
+		spi_send_recv(0x0);
+		spi_send_recv(0x10);
+		DISPLAY_CHANGE_TO_DATA_MODE;
 
+		for(j=0;j<32;j++){
+			if(matrix[i][j] & matrix[i+1][j]){
+				for(c=0;c<4;c++){
+					spi_send_recv(255);
+				}				
+			}
+			else if(matrix[i][j] & !matrix[i+1][j]){
+				for(c=0;c<4;c++){
+					spi_send_recv(15);
+				}			
+			}
+			else if(!matrix[i][j] & matrix[i+1][j]){
+				for(c=0;c<4;c++){
+					spi_send_recv(240);
+				}
+			}
+			else{/*Both are zero*/
+				for(c=0;c<4;c++){
+					spi_send_recv(0);
+				}
+			}				
+
+		}
+
+	}
+
+}
+
+void display_frommatrixinv(volatile int matrix[8][32]){
+	int i,j,c;
+	for(i=0;i<8;i+=2){
+		DISPLAY_CHANGE_TO_COMMAND_MODE;
+		spi_send_recv(0x22);
+		spi_send_recv(i/2);
+		spi_send_recv(0x0);
+		spi_send_recv(0x10);
+		DISPLAY_CHANGE_TO_DATA_MODE;
+
+		for(j=0;j<32;j++){
+			if(matrix[i][j] & matrix[i+1][j]){
+				for(c=0;c<4;c++){
+					spi_send_recv(~255);
+				}				
+			}
+			else if(matrix[i][j] & !matrix[i+1][j]){
+				for(c=0;c<4;c++){
+					spi_send_recv(~15);
+				}			
+			}
+			else if(!matrix[i][j] & matrix[i+1][j]){
+				for(c=0;c<4;c++){
+					spi_send_recv(~240);
+				}
+			}
+			else{/*Both are zero*/
+				for(c=0;c<4;c++){
+					spi_send_recv(~0);
+				}
+			}				
+
+		}
+
+	}
+
+}
+
+int fullrow(int i, volatile int matrix[8][32]){
+	int j;
+	int r = 1;
+	for(j=0;j<8;j++){
+		if(matrix[j][i]){
+			return 0;
+		}
+	}
+	return 1;
+}
+
+void rowgodown(int i, volatile int matrix[8][32]){
+	int j,c;
+	for(j=0;j<8;j++){
+		for(c=i;c<32;c++){
+			if(c==31){
+				matrix[j][c]=0;
+			}
+			else{
+			matrix[j][c]=matrix[j][c+1];
+			}
+		}
+	}
+
+}
 void display_frommatrix(int[8][32] matrix){
 	int i,j;
 	for(i=0;i<8;i+=2){
@@ -393,18 +493,7 @@ void timer_init(){
   return;
 }
 
-/*Interrupt service routine, makes block go down and checks for collision*/
-void godown(){
-	Block currentBlock;
-	currentBlock->parameter -= 1;
-	listindex = listindex % 20;
-	if(colliding(currentBlock->pixels, template)){
-		currentBlock->parameter += 1;
-		currentBlock = list[listindex];			
-	}
-	display_image(currentBlock->parameter, currentBlock->pixels);
-  return;
-}
+
 
 
 

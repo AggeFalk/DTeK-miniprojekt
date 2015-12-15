@@ -200,7 +200,7 @@ _isr_trampoline:
 	sw $15,60($sp)
 
 	# call user's handler
-	jal godown
+	jal user_isr
 	nop
 
 	# restore saved registers
