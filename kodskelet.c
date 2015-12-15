@@ -53,11 +53,6 @@ int main(){
 	fillist();
 	//END SETUP
 	
-       
-
-
-
-void main(){
      while(1){     
 	    int input = getbtns();
             switch (input){
@@ -79,4 +74,4 @@ void main(){
 
 	return 0;
     }
-}
+
