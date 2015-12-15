@@ -17,13 +17,14 @@ unsigned char[8][32] background = {
 };
 
 unsigned char[8][32] picture;
-unsigned char[4][2] currentBlock;
+unsigned char[4][4][2] currentBlock;
+unsigned char orientation = 0;
 
 
-unsigned char[8][32] addBlock(unsigned char[8][32] picture,unsigned char[4][2] block){
+unsigned char[8][32] addBlock(unsigned char[8][32] picture,unsigned char[4][4][2] block){
     int i;
     for(i=0;i<4;i++){
-        picture[block[i][0]][block[i][1]] += 1;
+        picture[block[orientation][i][0]][block[orientation][i][1]] += 1;
     }
     return picture;
 }
@@ -42,19 +43,25 @@ unsigned char collision(unsigned char[8][32] picture){
 
 unsigned char[8][32] moveDown(){
     int i;
-    unsigned char[4][2] tempBlock = currentBlock;
+    unsigned char[4][4][2] tempBlock = currentBlock;
     for(i=0;i<4;i++){
-        if(currentBlock[i][1] == 0){
+        if(currentBlock[orientation][i][1] == 0){
             return addBlock(background,tempBlock);
         }
         else{
-            currentBlock[i][1]--;
+            int o;
+            for(o=0;o<4;o++){
+                currentBlock[o][i][1]--;
+            }
         }
     }
     unsigned char[8][32] newPicture = addBlock(background,currentBlock);
     if(collision(newPicture)){
         for(i=0;i<4;i++){
-            currentBlock[i][1]++;
+            int o;
+            for(o=0;o<4;o++){
+                currentBlock[o][i][1]++;
+            }
         }
         return addBlock(background,currentBlock);
     }
@@ -65,19 +72,25 @@ unsigned char[8][32] moveDown(){
 
 void moveLeft(){
     int i;
-    unsigned char[4][2] tempBlock = currentBlock;
+    unsigned char[4][4][2] tempBlock = currentBlock;
     for(i=0;i<4;i++){
-        if(currentBlock[i][0] == 0){
+        if(currentBlock[orientation][i][0] == 0){
             return addBlock(background,tempBlock);
         }
         else{
-            currentBlock[i][0]--;
+            int o;
+            for(o=0;o<4;o++){
+                currentBlock[o][i][0]--;
+            }
         }
     }
     unsigned char[8][32] newPicture = addBlock(background,currentBlock);
     if(collision(newPicture)){
         for(i=0;i<4;i++){
-            currentBlock[i][0]++;
+            int o;
+            for(o=0;o<4;o++){
+                currentBlock[o][i][0]++;
+            }
         }
         return addBlock(background,currentBlock);
     }
@@ -88,19 +101,25 @@ void moveLeft(){
 
 void moveRight(){
     int i;
-    unsigned char[4][2] tempBlock = currentBlock;
+    unsigned char[4][4][2] tempBlock = currentBlock;
     for(i=0;i<4;i++){
-        if(currentBlock[i][0] == 7){
+        if(currentBlock[orientation][i][0] == 7){
             return addBlock(background,tempBlock);
         }
         else{
-            currentBlock[i][0]++;
+            int o;
+            for(o=0;o<4;o++){
+                currentBlock[o][i][0]++;
+            }
         }
     }
     unsigned char[8][32] newPicture = addBlock(background,currentBlock);
     if(collision(newPicture)){
         for(i=0;i<4;i++){
-            currentBlock[i][0]--;
+            int o;
+            for(o=0;o<4;o++){
+                currentBlock[o][i][0]--;
+            }
         }
         return addBlock(background,currentBlock);
     }
@@ -110,39 +129,52 @@ void moveRight(){
 }
 
 void putDown(){
-    unsigned char[4][2] tempBlock = currentBlock;
-    while(tempBlock[0][0]==currentBlock[0][0]){
+    unsigned char[4][4][2] tempBlock = currentBlock;
+    while(tempBlock[orientation][0][0]==currentBlock[orientation][0][0]){
         moveDown();
-        tempBlock[0][0]--;
+        tempBlock[orientation][0][0]--;
     }
     return moveDown();
 }
 
 void rotate(){
-    int i;
-    unsigned char maxH = 0;
-    unsigned char minH = 255;
-    unsigned char maxW = 0;
-    unsigned char minW = 255;
-    unsigned char[4][2] tempBlock = currentBlock;
-    for(i=0;i<4;i++){
-        if(currentBlock[i][0] > maxW){
-            maxW = currentBlock[i][j];
-        }
-        if(currentBlock[i][0] < minW){
-            minW = currentBlock[i][j];
-        }
-        if(currentBlock[i][1] > maxH){
-            maxH = currentBlock[i][j];
-        }
-        if(currentBlock[i][1] < minH){
-            minH = currentBlock[i][j];
-        }
-    }
-    if(maxW-minW>maxH-minH){
-        unsigned char[maxW-minW][maxW-minW] square;
+    if(orientation == 3){
+        orientation = 0;
     }
     else{
-        unsigned char[maxH-minH][maxH-minH] square;
+        orientation++;
     }
+    int i;
+    int o;
+    for(i=0;i<4;i++){
+        while(currentBlock[orientation][i][0]<0){
+            for(o=0;o<4;o++){
+                currentBlock[o][i][0]++;
+            }
+        }
+        while(currentBlock[orientation][i][0]>7){
+            for(o=0;o<4;o++){
+                currentBlock[o][i][0]--;
+            }
+        }
+        while(currentBlock[orientation][i][1]<0){
+            for(o=0;o<4;o++){
+                currentBlock[o][i][1]++;
+            }
+        }
+        while(currentBlock[orientation][i][1]>32){
+            for(o=0;o<4;o++){
+                currentBlock[o][i][1]--;
+            }
+        }
+    }
+    if(collision(addBlock(background,currentBlock))){
+        if(orientation == 0){
+            orientation = 3;
+        }
+        else{
+            orientation--;
+        }
+    }
+    return addBlock(background,currentBlock);
 }
