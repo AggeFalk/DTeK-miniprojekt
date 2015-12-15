@@ -107,7 +107,7 @@ unsigned char moveDown[8][32](){
     }
 }
 
-void moveLeft(){
+unsigned char moveLeft[8][32](){
     int i;
     unsigned char tempBlock[4][4][2] = currentBlock;
     for(i=0;i<4;i++){
@@ -136,7 +136,7 @@ void moveLeft(){
     }
 }
 
-void moveRight(){
+unsigned char moveRight[8][32](){
     int i;
     unsigned char tempBlock[4][4][2] = currentBlock;
     for(i=0;i<4;i++){
@@ -165,7 +165,7 @@ void moveRight(){
     }
 }
 
-void putDown(){
+unsigned char putDown[8][32](){
     unsigned char tempBlock[4][4][2] = currentBlock;
     while(tempBlock[orientation][0][0]==currentBlock[orientation][0][0]){
         moveDown();
@@ -174,7 +174,7 @@ void putDown(){
     return moveDown();
 }
 
-void rotate(){
+unsigned char rotate[8][32](){
     if(orientation == 3){
         orientation = 0;
     }
