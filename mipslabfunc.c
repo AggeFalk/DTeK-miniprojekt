@@ -96,6 +96,16 @@ uint8_t spi_send_recv(uint8_t data) {
 	return SPI2BUF;
 }
 
+int game_over(volatile int matrix[8][32])7
+	int i;
+	for(i=0;i<32;i++){
+		if(matrix[7][i]==2){
+			return 1;
+		}
+	}
+	return 0;
+}
+
 void display_init(void) {
         DISPLAY_CHANGE_TO_COMMAND_MODE;
 	quicksleep(10);
@@ -178,7 +188,7 @@ void display_background(const uint8_t *background) {
 		}
 	}
 }
-void display_frommatrix(volatile int matrix[8][32]){
+void display_frommatrix(volatile unsigned char matrix[8][32]){
 	int i,j,c;
 	for(i=0;i<8;i+=2){
 		DISPLAY_CHANGE_TO_COMMAND_MODE;
@@ -216,7 +226,7 @@ void display_frommatrix(volatile int matrix[8][32]){
 
 }
 
-void display_frommatrixinv(volatile int matrix[8][32]){
+void display_frommatrixinv(volatile unsigned char matrix[8][32]){
 	int i,j,c;
 	for(i=0;i<8;i+=2){
 		DISPLAY_CHANGE_TO_COMMAND_MODE;
@@ -254,7 +264,7 @@ void display_frommatrixinv(volatile int matrix[8][32]){
 
 }
 
-int fullrow(int i, volatile int matrix[8][32]){
+int fullrow(int i, volatile unsigned char matrix[8][32]){
 	int j;
 	int r = 1;
 	for(j=0;j<8;j++){
@@ -265,7 +275,7 @@ int fullrow(int i, volatile int matrix[8][32]){
 	return 1;
 }
 
-void rowgodown(int i, volatile int matrix[8][32]){
+void rowgodown(int i, volatile unsigned char matrix[8][32]){
 	int j,c;
 	for(j=0;j<8;j++){
 		for(c=i;c<32;c++){
@@ -279,7 +289,7 @@ void rowgodown(int i, volatile int matrix[8][32]){
 	}
 
 }
-void display_frommatrix(int[8][32] matrix){
+void display_frommatrix(volatile unsigned char matrix[8][32]){
 	int i,j;
 	for(i=0;i<8;i+=2){
 		DISPLAY_CHANGE_TO_COMMAND_MODE;
