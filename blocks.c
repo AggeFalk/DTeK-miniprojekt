@@ -1,10 +1,40 @@
-unsigned char[4][4][2] simpleStick = {{{2,31},{3,31},{4,31},{5,31}},
+unsigned char simpleStick[4][4][2] = {{{2,31},{3,31},{4,31},{5,31}},
                                         {{3,31},{3,30},{3,29},{3,28}},
                                         {{2,31},{3,31},{4,31},{5,31}},
                                         {{3,31},{3,30},{3,29},{3,28}}
                                         };
+unsigned char simpleBox[4][4][2] = {{{3,31},{3,30},{4,31},{4,30}},
+                                        {{3,31},{3,30},{4,31},{4,30},
+                                        {{3,31},{3,30},{4,31},{4,30},
+                                        {{3,31},{3,30},{4,31},{4,30}
+                                        };
+unsigned char simplePodium[4][4][2] = {{{2,30},{3,30},{3,31},{4,30}},
+                                        {{3,31},{3,30},{3,29},{4,30},
+                                        {{2,30},{3,30},{4,30},{3,29},
+                                        {{2,30},{3,31},{3,30},{3,29}
+                                        };
+unsigned char simpleLZig[4][4][2] = {{{2,30},{3,30},{3,31},{4,31}},
+                                        {{2,31},{2,30},{3,30},{3,29},
+                                        {{2,30},{3,30},{3,31},{4,31},
+                                        {{2,31},{2,30},{3,30},{3,29}
+                                        };
+unsigned char simpleRZig[4][4][2] = {{{2,31},{3,31},{3,30},{4,30}},
+                                        {{2,30},{2,29},{3,31},{3,30},
+                                        {{2,31},{3,31},{3,30},{4,30},
+                                        {{2,30},{2,29},{3,31},{3,30}
+                                        };
+unsigned char simpleLfoot[4][4][2] = {{{2,29},{3,31},{3,30},{3,29}},
+                                        {{2,31},{2,30},{3,30},{4,30},
+                                        {{2,29},{2,30},{2,31},{3,31},
+                                        {{2,31},{3,31},{4,31},{4,30}
+                                        };
+unsigned char simpleRfoot[4][4][2] = {{{2,31},{2,30},{2,29},{3,29}},
+                                        {{2,31},{2,30},{3,31},{4,31},
+                                        {{2,31},{3,31},{3,30},{3,29},
+                                        {{2,30},{3,30},{4,30},{4,31}
+                                        };
 
-unsigned char[8][32] background = {
+unsigned char background[8][32] = {
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -16,12 +46,16 @@ unsigned char[8][32] background = {
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 };
 
-unsigned char[8][32] picture;
-unsigned char[4][4][2] currentBlock;
+unsigned char picture[8][32];
+unsigned char currentBlock[4][4][2];
 unsigned char orientation = 0;
 
+void newBlock(){
+    background = addBlock(background,currentBlock);
+    currentBlock = 
+}
 
-unsigned char[8][32] addBlock(unsigned char[8][32] picture,unsigned char[4][4][2] block){
+unsigned char addBlock[8][32](unsigned char picture[8][32],unsigned char block[4][4][2]){
     int i;
     for(i=0;i<4;i++){
         picture[block[orientation][i][0]][block[orientation][i][1]] += 1;
@@ -29,7 +63,7 @@ unsigned char[8][32] addBlock(unsigned char[8][32] picture,unsigned char[4][4][2
     return picture;
 }
 
-unsigned char collision(unsigned char[8][32] picture){
+unsigned char collision(unsigned char picture[8][32]){
     int i;
     int j;
     for(i=0;i<8;i++){
@@ -41,12 +75,14 @@ unsigned char collision(unsigned char[8][32] picture){
     return 0;
 }
 
-unsigned char[8][32] moveDown(){
+unsigned char moveDown[8][32](){
     int i;
-    unsigned char[4][4][2] tempBlock = currentBlock;
+    unsigned char tempBlock[4][4][2] = currentBlock;
     for(i=0;i<4;i++){
         if(currentBlock[orientation][i][1] == 0){
-            return addBlock(background,tempBlock);
+            currentBlock = tempBlock;
+            newBlock();
+            return addBlock(background,currentBlock);
         }
         else{
             int o;
@@ -55,7 +91,7 @@ unsigned char[8][32] moveDown(){
             }
         }
     }
-    unsigned char[8][32] newPicture = addBlock(background,currentBlock);
+    unsigned char newPicture[8][32] = addBlock(background,currentBlock);
     if(collision(newPicture)){
         for(i=0;i<4;i++){
             int o;
@@ -63,6 +99,7 @@ unsigned char[8][32] moveDown(){
                 currentBlock[o][i][1]++;
             }
         }
+        newBlock();
         return addBlock(background,currentBlock);
     }
     else{
@@ -70,9 +107,9 @@ unsigned char[8][32] moveDown(){
     }
 }
 
-void moveLeft(){
+unsigned char moveLeft[8][32](){
     int i;
-    unsigned char[4][4][2] tempBlock = currentBlock;
+    unsigned char tempBlock[4][4][2] = currentBlock;
     for(i=0;i<4;i++){
         if(currentBlock[orientation][i][0] == 0){
             return addBlock(background,tempBlock);
@@ -84,7 +121,7 @@ void moveLeft(){
             }
         }
     }
-    unsigned char[8][32] newPicture = addBlock(background,currentBlock);
+    unsigned char newPicture[8][32] = addBlock(background,currentBlock);
     if(collision(newPicture)){
         for(i=0;i<4;i++){
             int o;
@@ -99,9 +136,9 @@ void moveLeft(){
     }
 }
 
-void moveRight(){
+unsigned char moveRight[8][32](){
     int i;
-    unsigned char[4][4][2] tempBlock = currentBlock;
+    unsigned char tempBlock[4][4][2] = currentBlock;
     for(i=0;i<4;i++){
         if(currentBlock[orientation][i][0] == 7){
             return addBlock(background,tempBlock);
@@ -113,7 +150,7 @@ void moveRight(){
             }
         }
     }
-    unsigned char[8][32] newPicture = addBlock(background,currentBlock);
+    unsigned char newPicture[8][32] = addBlock(background,currentBlock);
     if(collision(newPicture)){
         for(i=0;i<4;i++){
             int o;
@@ -128,8 +165,8 @@ void moveRight(){
     }
 }
 
-void putDown(){
-    unsigned char[4][4][2] tempBlock = currentBlock;
+unsigned char putDown[8][32](){
+    unsigned char tempBlock[4][4][2] = currentBlock;
     while(tempBlock[orientation][0][0]==currentBlock[orientation][0][0]){
         moveDown();
         tempBlock[orientation][0][0]--;
@@ -137,7 +174,7 @@ void putDown(){
     return moveDown();
 }
 
-void rotate(){
+unsigned char rotate[8][32](){
     if(orientation == 3){
         orientation = 0;
     }
