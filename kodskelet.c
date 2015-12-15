@@ -4,6 +4,7 @@
 //Kodskelet, ej syntaktiskt korrekt.
 int background[128];
 
+<<<<<<< HEAD
 /*private helper method to fill list*/
 void fillist(){
 	int list[] = {1,4,5,6,3,2,0,2,4,5,0,3,0,1,4,3,6,1,3,5};
@@ -52,7 +53,12 @@ int main(){
 	fillist();
 	//END SETUP
 	
-        while(1){     
+       
+
+
+
+void main(){
+     while(1){     
 	    int input = getbtns();
             switch (input){
                 case 1:
@@ -70,7 +76,7 @@ int main(){
            
             }
         }
-    
-	return 0;
 
+	return 0;
+    }
 }
